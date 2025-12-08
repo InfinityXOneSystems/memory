@@ -45,11 +45,13 @@ class Memory:
             raise TypeError("Key must be a string")
         
         is_new = key not in self._store
+        existing_metadata = self._metadata.get(key, {})
+        
         self._store[key] = value
         self._metadata[key] = {
-            'created_at': datetime.now() if is_new else self._metadata[key]['created_at'],
+            'created_at': datetime.now() if is_new else existing_metadata.get('created_at', datetime.now()),
             'updated_at': datetime.now(),
-            'access_count': self._metadata.get(key, {}).get('access_count', 0)
+            'access_count': existing_metadata.get('access_count', 0)
         }
         self._stats['total_writes'] += 1
     
